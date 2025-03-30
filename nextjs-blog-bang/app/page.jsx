@@ -1,10 +1,11 @@
 import Charts from './components/Charts';
+import Dashboard from './pages/Dashboard';
+
 
 export default function Home() {
   return (
-    <div>
-      <h1>Heart Disease Analysis</h1>
-      <Charts />
+    <div className="container mx-auto p-4">
+      <Dashboard />
     </div>
   );
 }
