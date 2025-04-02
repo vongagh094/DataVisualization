@@ -17,7 +17,7 @@ interface ExerciseHabitGroupStats {
     heartDiseaseNoPercentage: number;
 }
 
-export default function Task3() {
+export default function Task4() {
     const [ExerciseHabitGroupStats, setExerciseHabitGroupStats] = useState<
         ExerciseHabitGroupStats[]
     >([]);
