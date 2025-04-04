@@ -39,7 +39,7 @@ export default function Task5() {
         }));
 
         // Task 5.1: Box Plot data
-        const grouped = d3.group(raw, (d) => d["Heart Disease Status"]);
+        const grouped = d3.group(raw, (d) => d["Heart Disease Status"]) as Map<string, typeof raw>;
         const boxStats: CholesterolHeartDiseaseStats[] = Array.from(grouped, ([status, values]) => {
           const levels = values.map(d => +d["Cholesterol Level"]).sort((a, b) => a - b);
           const q1 = d3.quantile(levels, 0.25)!;
