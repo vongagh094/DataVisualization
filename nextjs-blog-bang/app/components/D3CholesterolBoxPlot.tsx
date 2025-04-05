@@ -34,15 +34,17 @@ export default function D3CholesterolBoxPlot({ data }: CholesterolBoxPlotProps) 
 
     // Tooltip setup
     const tooltip = d3
-      .select(svgRef.current.parentElement)
+      .select("body")
       .append("div")
       .style("position", "absolute")
-      .style("background", "white")
-      .style("border", "1px solid #ccc")
-      .style("padding", "5px")
-      .style("border-radius", "5px")
+      .style("background", "rgba(255, 255, 255, 0.9)")
+      .style("border", "1px solid #333")
+      .style("padding", "8px")
+      .style("border-radius", "4px")
+      .style("box-shadow", "2px 2px 6px rgba(0, 0, 0, 0.3)")
       .style("pointer-events", "none")
-      .style("opacity", 0);
+      .style("opacity", 0)
+      .style("font-size", "12px");
 
     // Color scale for "Yes" and "No"
     const color = d3
