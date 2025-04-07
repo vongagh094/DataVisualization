@@ -106,7 +106,6 @@ export default function Task8({ showViolinPlot, togglePlotType }: Task8Props) {
                   <li>Median: {cholesterolData[0]?.median} mg/dL</li>
                   <li>Third Quartile (Q3): {cholesterolData[0]?.q3} mg/dL</li>
                   <li>Maximum: {cholesterolData[0]?.max} mg/dL</li>
-                  <li>Outliers: {cholesterolData[0]?.outliers.join(", ")} mg/dL</li>
                 </ul>
               </div>
 
@@ -118,7 +117,6 @@ export default function Task8({ showViolinPlot, togglePlotType }: Task8Props) {
                   <li>Median: {cholesterolData[1]?.median} mg/dL</li>
                   <li>Third Quartile (Q3): {cholesterolData[1]?.q3} mg/dL</li>
                   <li>Maximum: {cholesterolData[1]?.max} mg/dL</li>
-                  <li>Outliers: {cholesterolData[1]?.outliers.join(", ")} mg/dL</li>
                 </ul>
               </div>
             </div>
