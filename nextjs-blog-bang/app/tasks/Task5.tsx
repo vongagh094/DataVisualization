@@ -39,7 +39,7 @@ export default function Task5() {
         }));
 
         // Task 5.1: Box Plot data
-        const grouped = d3.group(raw, (d) => d["Heart Disease Status"]);
+        const grouped = d3.group(raw, (d) => d["Heart Disease Status"]) as Map<string, typeof raw>;
         const boxStats: CholesterolHeartDiseaseStats[] = Array.from(grouped, ([status, values]) => {
           const levels = values.map(d => +d["Cholesterol Level"]).sort((a, b) => a - b);
           const q1 = d3.quantile(levels, 0.25)!;
@@ -144,11 +144,23 @@ export default function Task5() {
       </div>
       <div className="mt-4">
         <p className="text-muted-foreground">
-          This analysis examines the distribution of cholesterol levels among individuals with and without heart disease. 
-          The box plot shows overlapping cholesterol ranges for both groups, indicating that cholesterol levels alone may 
-          not be a definitive indicator of heart disease. However, the stacked bar chart highlights that individuals in the 
-          "High" cholesterol group have a slightly higher proportion of heart disease cases compared to the "Low" and "Medium" 
-          groups. This suggests that while cholesterol levels are a factor, they should be considered alongside other risk factors.
+          <strong>Box Plot</strong><br />
+          - <strong>No Heart Disease (No):</strong> Q1 = 187, Median = 225.4, Q3 = 263.<br />
+          - <strong>With Heart Disease (Yes):</strong> Q1 = 188, Median = 226, Q3 = 263.<br />
+
+          <strong>Observations:</strong><br />
+          The Q1, median, and Q3 values between the two groups are very close, showing almost no significant difference. This suggests that the data may not be strong enough to clearly reflect a relationship between cholesterol and heart disease.<br /><br />
+
+          <strong>Stacked Bar Chart</strong><br />
+          - <strong>Low (&lt; 200 cholesterol):</strong> No heart disease (80.27%), with heart disease (19.73%).<br />
+          - <strong>Medium (200 - 240 cholesterol):</strong> No heart disease (79.86%), with heart disease (20.14%).<br />
+          - <strong>High (&gt; 240 cholesterol):</strong> No heart disease (79.87%), with heart disease (20.13%).<br />
+
+          <strong>Observations:</strong><br />
+          The percentages are nearly identical across all three cholesterol groups, clearly indicating that cholesterol levels do not create a significant difference in heart disease prevalence.<br /><br />
+
+          <strong>Conclusion:</strong><br />
+          Both visualizations consistently show that cholesterol levels do not have a strong or clear impact on the likelihood of developing heart disease based on the given dataset.
         </p>
       </div>
     </TaskCard>

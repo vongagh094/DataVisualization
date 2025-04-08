@@ -27,9 +27,9 @@ export default function D3ViolinPlot({ data }: D3ViolinPlotProps) {
     // Clear previous chart
     d3.select(svgRef.current).selectAll("*").remove()
 
-    const margin = { top: 30, right: 30, bottom: 60, left: 60 }
-    const width = svgRef.current.clientWidth - margin.left - margin.right
-    const height = svgRef.current.clientHeight - margin.top - margin.bottom
+    const margin = { top: 30, right: 40, bottom: 80, left: 80 }
+    const width = 500 - margin.left - margin.right
+    const height = 500 - margin.top - margin.bottom
 
     const svg = d3.select(svgRef.current).append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
