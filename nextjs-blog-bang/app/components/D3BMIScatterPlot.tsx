@@ -22,16 +22,16 @@ export default function D3BMIScatterPlot({ data }: BMIScatterPlotProps) {
     // Filter data based on the selected filter
     const filtered = data.filter((d) => d.heartDisease === filter && d.bmi > 10);
 
-    // 2. Gom theo BMI (làm tròn đến 1 chữ số sau dấu phẩy)
-    const grouped = d3.rollup(
-      filtered,
-      v => v.length,
-      d => +d.bmi.toFixed(1)
-    );
+    // Group data into bins of 2 BMI
+    const binGenerator = d3.bin()
+      .domain(d3.extent(filtered, d => d.bmi) as [number, number])
+      .thresholds(d3.range(10, d3.max(filtered, d => d.bmi) || 0, 2)); // Bins of size 2
 
-    const scatterData = Array.from(grouped, ([bmi, count]) => ({
-      bmi,
-      count
+    const bins = binGenerator(filtered.map(d => d.bmi));
+
+    const scatterData = bins.map(bin => ({
+      bmi: (bin.x0! + bin.x1!) / 2, // Midpoint of the bin
+      count: bin.length
     }));
 
     // 3. Tính miền giá trị
@@ -40,6 +40,7 @@ export default function D3BMIScatterPlot({ data }: BMIScatterPlotProps) {
     const minBMI = Math.min(...bmiValues);
     const maxBMI = Math.max(...bmiValues);
     const maxCount = Math.max(...countValues);
+    const minCount = Math.min(...countValues);
 
     // 4. D3 Setup
     const margin = { top: 40, right: 30, bottom: 60, left: 60 };
@@ -58,7 +59,7 @@ export default function D3BMIScatterPlot({ data }: BMIScatterPlotProps) {
       .range([0, width]);
 
     const y = d3.scaleLinear()
-      .domain([0, maxCount + 1])
+      .domain([minCount - 10, maxCount + 10])
       .range([height, 0]);
 
     // Tooltip setup
@@ -78,7 +79,10 @@ export default function D3BMIScatterPlot({ data }: BMIScatterPlotProps) {
     // 5. Trục
     chart.append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x)
+        .tickValues(bmiValues) // Hiển thị tất cả các giá trị BMI
+        .tickFormat(d3.format("d")) // Định dạng số nguyên
+      );
 
     chart.append("g")
       .call(d3.axisLeft(y));
@@ -113,7 +117,6 @@ export default function D3BMIScatterPlot({ data }: BMIScatterPlotProps) {
         tooltip.style("opacity", 0);
         points.attr("opacity", 0.8); // Reset all points
       });
-
 
     // 7. Tiêu đề
     chart.append("text")

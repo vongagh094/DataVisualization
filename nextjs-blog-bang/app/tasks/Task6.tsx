@@ -65,11 +65,11 @@ export default function Task6() {
         <div className="mt-4">
           <p className="text-muted-foreground">
             <strong>BMI Analysis</strong><br />
-            The data is widely distributed across BMI levels. However, there is no clear trend indicating a linear relationship between BMI and the number of people with heart disease (or heart disease status). Some low BMI ranges (e.g., 18-22) show points with high numbers of heart disease cases (over 10), while some points in higher BMI ranges (35-40) show lower numbers, indicating randomness and strong dispersion.<br /><br />
-
-            BMI levels between 24-30 appear to have higher point density, but the number of heart disease cases at each point doesn't show consistent growth or superiority compared to other BMI levels. There are no clear "high point clusters" in higher BMI ranges, which would typically be expected if the hypothesis "high BMI → higher heart disease risk" were true.<br /><br />
-
-            This suggests that BMI does not clearly demonstrate correlation with heart disease status (Heart Disease Status).
+            The Scatter Plot shows the relationship between BMI (Body Mass Index) and the number of people with heart disease. 
+            The data spans BMI values from 19 to 39, with heart disease cases ranging from 165 to 210. 
+            Although there is a slight increase in heart disease cases as BMI rises from 27 to 37, the trend is weak and not enough to confirm a clear relationship. 
+            The drop at BMI values like 33 and 39 indicates no strong linear correlation between BMI and heart disease. 
+            This suggests BMI may not be a major factor in heart disease status.
           </p>
         </div>
       </div>
