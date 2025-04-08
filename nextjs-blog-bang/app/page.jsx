@@ -1,4 +1,3 @@
-import Charts from "./components/Charts";
 import Dashboard from "./pages/Dashboard";
 
 export default function Home() {
