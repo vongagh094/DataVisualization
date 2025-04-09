@@ -5,8 +5,7 @@ import * as d3 from "d3"
 
 interface DataPoint {
   familyHistory: string
-  malePercentage: number
-  femalePercentage: number
+  diseasePercentage: number
 }
 
 interface D3GroupedBarChartProps {
@@ -47,14 +46,11 @@ export default function D3GroupedBarChart({ data }: D3GroupedBarChartProps) {
     }
 
     // X scale
-    const x0 = d3
+    const x = d3
       .scaleBand()
       .domain(data.map((d) => d.familyHistory))
       .range([0, width])
       .padding(0.2)
-
-    // X scale for grouped bars
-    const x1 = d3.scaleBand().domain(["malePercentage", "femalePercentage"]).range([0, x0.bandwidth()]).padding(0.05)
 
     // Y scale
     const y = d3
@@ -62,17 +58,16 @@ export default function D3GroupedBarChart({ data }: D3GroupedBarChartProps) {
       .domain([0, 100]) // Percentage scale
       .range([height, 0])
 
-    // Color scale
-    const color = d3
-  .scaleOrdinal<string>()
-  .domain(["malePercentage", "femalePercentage"])
-  .range(["#2A9D90", "#E76E50"]) // Blue for male, orange for female
+    // Color scale: Assign a unique color to each family history category
+    const color = d3.scaleOrdinal<string>()
+      .domain(data.map(d => d.familyHistory))
+      .range(d3.schemeCategory10) // Use D3's built-in color scheme
 
     // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x0))
+      .call(d3.axisBottom(x))
       .selectAll("text")
       .style("text-anchor", "middle")
 
@@ -112,26 +107,17 @@ export default function D3GroupedBarChart({ data }: D3GroupedBarChartProps) {
       .attr("stroke", "hsl(var(--border))")
       .attr("stroke-opacity", 0.3)
 
-    // Add grouped bars
+    // Add bars
     svg
-      .append("g")
-      .selectAll("g")
+      .selectAll("rect")
       .data(data)
       .enter()
-      .append("g")
-      .attr("transform", (d) => `translate(${x0(d.familyHistory)},0)`)
-      .selectAll("rect")
-      .data((d) => [
-        { key: "malePercentage", value: d.malePercentage, familyHistory: d.familyHistory },
-        { key: "femalePercentage", value: d.femalePercentage, familyHistory: d.familyHistory },
-      ])
-      .enter()
       .append("rect")
-      .attr("x", (d) => x1(d.key) || 0)
-      .attr("y", (d) => y(d.value))
-      .attr("width", x1.bandwidth())
-      .attr("height", (d) => height - y(d.value))
-      .attr("fill", (d) => color(d.key))
+      .attr("x", (d) => x(d.familyHistory) || 0)
+      .attr("y", (d) => y(d.diseasePercentage))
+      .attr("width", x.bandwidth())
+      .attr("height", (d) => height - y(d.diseasePercentage))
+      .attr("fill", (d) => color(d.familyHistory)) // Use the color scale
       .attr("rx", 4)
       .on("mouseover", function (event, d) {
         // Highlight bar
@@ -141,8 +127,7 @@ export default function D3GroupedBarChart({ data }: D3GroupedBarChartProps) {
         if (tooltipRef.current) {
           d3.select(tooltipRef.current)
             .style("opacity", "1")
-            .html(`<strong>${d.familyHistory} Family History</strong><br>
-                 ${d.key === "malePercentage" ? "Male" : "Female"}: ${d.value}%`)
+            .html(`<strong>${d.familyHistory} Family History</strong><br>Percentage: ${d.diseasePercentage}%`)
             .style("left", event.pageX + 10 + "px")
             .style("top", event.pageY - 28 + "px")
         }
@@ -159,56 +144,19 @@ export default function D3GroupedBarChart({ data }: D3GroupedBarChartProps) {
 
     // Add percentage labels on bars
     svg
-      .append("g")
-      .selectAll("g")
+      .selectAll("text.label")
       .data(data)
       .enter()
-      .append("g")
-      .attr("transform", (d) => `translate(${x0(d.familyHistory)},0)`)
-      .selectAll("text")
-      .data((d) => [
-        { key: "malePercentage", value: d.malePercentage, familyHistory: d.familyHistory },
-        { key: "femalePercentage", value: d.femalePercentage, familyHistory: d.familyHistory },
-      ])
-      .enter()
       .append("text")
-      .attr("x", (d) => (x1(d.key) || 0) + x1.bandwidth() / 2)
-      .attr("y", (d) => y(d.value) - 5)
+      .attr("class", "label")
+      .attr("x", (d) => (x(d.familyHistory) || 0) + x.bandwidth() / 2)
+      .attr("y", (d) => y(d.diseasePercentage) - 5)
       .attr("text-anchor", "middle")
-      .text((d) => `${d.value}%`)
+      .text((d) => `${d.diseasePercentage}%`)
       .style("font-size", "12px")
       .style("font-weight", "bold")
-      .style("fill", (d) => color(d.key))
+      .style("fill", "#000")
 
-    // Add legend
-    const legend = svg.append("g").attr("transform", `translate(${width - 100}, 0)`)
-
-    const legendData = [
-      { key: "malePercentage", label: "Male" },
-      { key: "femalePercentage", label: "Female" },
-    ]
-
-    legend
-      .selectAll("rect")
-      .data(legendData)
-      .enter()
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", (d, i) => i * 20)
-      .attr("width", 15)
-      .attr("height", 15)
-      .attr("fill", (d) => color(d.key))
-      .attr("rx", 2)
-
-    legend
-      .selectAll("text")
-      .data(legendData)
-      .enter()
-      .append("text")
-      .attr("x", 20)
-      .attr("y", (d, i) => i * 20 + 12)
-      .text((d) => d.label)
-      .style("font-size", "12px")
   }, [data])
 
   return <svg ref={svgRef} width="100%" height="100%"></svg>

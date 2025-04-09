@@ -7,8 +7,7 @@ import { useState, useEffect } from "react"
 
 interface DataPoint {
   familyHistory: string
-  malePercentage: number
-  femalePercentage: number
+  diseasePercentage: number
 }
 
 
@@ -39,22 +38,17 @@ export default function Task7() {
     }));
   
     const grouped = d3.group(raw, d => d.Family_History) as Map<string, typeof raw>;
-    
+    const totalDiseaseCount = d3.count(raw, d => d.Heart_Disease === "Yes");
     const result: DataPoint[] = Array.from(grouped, ([history, records]) => {
-      const maleRecords = records.filter(d => d.Gender === "Male");
-      const femaleRecords = records.filter(d => d.Gender === "Female");
-  
-      const maleDiseaseCount = maleRecords.filter(d => d.Heart_Disease === "Yes").length;
-      const femaleDiseaseCount = femaleRecords.filter(d => d.Heart_Disease === "Yes").length;
-  
-      const malePercentage = maleRecords.length === 0 ? 0 : +(maleDiseaseCount / maleRecords.length * 100).toFixed(2);
-      const femalePercentage = femaleRecords.length === 0 ? 0 : +(femaleDiseaseCount / femaleRecords.length * 100).toFixed(2);
+      const diseasedRecords = d3.count(records, d => d.Heart_Disease === "Yes");
+      
+      // round by 2 decimals 
+      const diseasePercentage = Math.round((diseasedRecords / totalDiseaseCount) * 10000) / 100;
 
 
       return {
         familyHistory: history,
-        malePercentage,
-        femalePercentage,
+        diseasePercentage,
       };
     });
 
@@ -83,24 +77,35 @@ export default function Task7() {
         </Card>
       </div>
       <div className="mt-4">
-        <p className="text-muted-foreground">
-          The data reveals a slight variation in the prevalence of heart disease between males and females, as well as between individuals with and without a family history of the condition.
-        </p>
-        <ul className="text-muted-foreground">
-          <li>
-            <strong>Gender Comparison:</strong> Across both categories (with and without a family history), females exhibit a marginally higher percentage of heart disease cases compared to males. Specifically:
-            <ul>
-              <li>Among individuals without a family history, 21.06% of females are affected compared to 19.55% of males.</li>
-              <li>Among those with a family history, 20.32% of females have heart disease, slightly higher than the 19.08% of males.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Impact of Family History:</strong> Interestingly, the presence of a family history of heart disease does not appear to significantly increase the percentage of affected individuals. The rates remain relatively stable, with only minor variations between the groups.
-          </li>
-          <li>
-            <strong>Overall Trend:</strong> The data suggests that while gender may play a small role in heart disease prevalence, family history does not seem to be a major differentiating factor in this particular dataset. However, further analysis with a larger sample size and additional risk factors would be necessary to draw more definitive conclusions.
-          </li>
-        </ul>
+        <div className="p-4 rounded-xl shadow-md bg-white text-base leading-relaxed">
+          <p><strong>Chart Overview:</strong></p>
+          <p>
+            The y-axis represents the percentage of individuals with heart disease.
+            The x-axis shows two categories for Family History: <strong>Yes</strong> (has family history) and <strong>No</strong> (no family history).
+          </p>
+          <p className="mt-2">
+            The percentage of individuals with heart disease is:
+          </p>
+          <ul className="list-disc list-inside ml-4 mt-2">
+            <li><strong>49.75%</strong> for those with a family history.</li>
+            <li><strong>50.25%</strong> for those without a family history.</li>
+          </ul>
+
+          <p className="mt-4"><strong>Interpretation:</strong></p>
+          <p>
+            The difference between the two groups is minimal: only <strong>0.5%</strong> more individuals without a family history have heart disease.
+          </p>
+          <p className="mt-2">
+            This contradicts the common assumption that having a family history increases the risk.
+            Statistically speaking, this very small difference suggests that family history, in this dataset, is not a significant factor in heart disease risk.
+          </p>
+
+          <p className="mt-4"><strong>Conclusion:</strong></p>
+          <p>
+            No, a family history of heart disease does <strong>not</strong> appear to increase the risk based on this chart.
+            In fact, the data shows a slightly higher rate of heart disease among those without a family history, although the difference is likely not meaningful and could be due to chance or other confounding factors.
+          </p>
+        </div>
       </div>
     </TaskCard>
   )
